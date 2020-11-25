@@ -1,22 +1,23 @@
 function[wt,t,s]=RMSProp_logistic_r_01(x,y,w0,u,a,e)
 %%
-%Ê¹ÓÃRMSProp·¨½øÐÐlogistic regression£¬´Ë´¦yÎª-1»ò1
-% xÖ¸Êý¾Ý,yÖ¸¶ÔÓ¦±êÇ©£¬aÖ¸ÌÝ¶ÈÏÂ½µÑ§Ï°ÂÊ£¬uÖ¸¶¯Á¿²ÎÊý£¬w0Îª³õÊ¼Öµ
-% EXAMPLE£º
+%ä½¿ç”¨RMSPropæ³•è¿›è¡Œlogistic regressionï¼Œæ­¤å¤„yä¸º-1æˆ–1
+% xæŒ‡æ•°æ®,yæŒ‡å¯¹åº”æ ‡ç­¾ï¼ŒaæŒ‡æ¢¯åº¦ä¸‹é™å­¦ä¹ çŽ‡ï¼ŒuæŒ‡åŠ¨é‡å‚æ•°ï¼Œw0ä¸ºåˆå§‹å€¼
+% è¾“å‡ºä¸­wtæŒ‡æœ€ç»ˆå¾—å‡ºçš„ç›´çº¿å‚æ•°ï¼ŒtæŒ‡è¿­ä»£æ¬¡æ•°ï¼ŒsæŒ‡å½“å‰losså‡½æ•°å€¼
+% EXAMPLEï¼š
 % load('logistic_regression.mat');
 %[wt,t,s]=RMSProp_logistic_r_n1_1(x,y,[0,0,0]',0.9,0.01,10^(-6))
 l=length(y);
-x1=[x,ones(l,1)];%Êý¾Ý¼ÓÁÐ
+x1=[x,ones(l,1)];%æ•°æ®åŠ åˆ—
 z=x1*w0;
-s=sum(-log(exp(-y.*z)./(1+exp(-y.*z))));%ËðÊ§º¯Êý¼ÆËã
+s=sum(-log(exp(-y.*z)./(1+exp(-y.*z))));%æŸå¤±å‡½æ•°è®¡ç®—
 t=0;
-v=zeros(3,1);%¶¯Á¿³õÖµÎª0
+v=zeros(3,1);%åŠ¨é‡åˆå€¼ä¸º0
 loss=[];
 while s>0.00001 && t>30000
-        gammax=sum(y.*sigmoid(-y.*z).*x1)';%ÌÝ¶È¼ÆËã
-        vt=u*v+(1-u)*gammax.*gammax;%¶¯Á¿µü´ú
+        gammax=sum(y.*sigmoid(-y.*z).*x1)';%æ¢¯åº¦è®¡ç®—
+        vt=u*v+(1-u)*gammax.*gammax;%åŠ¨é‡è¿­ä»£
         v=vt;
-        wt=w0-a*(gammax./(v.^(1/2)+e));%²ÎÊýµü´ú
+        wt=w0-a*(gammax./(v.^(1/2)+e));%å‚æ•°è¿­ä»£
         w0=wt;
         z=x1*w0;
         s=sum(-log(exp(-y.*z)./(1+exp(-y.*z))));
@@ -24,7 +25,7 @@ while s>0.00001 && t>30000
         loss(t)=s;
 end
 %%
-%½á¹û»æÍ¼
+%ç»“æžœç»˜å›¾
 xp = x(y>0,:)';
 xn = x(y==0,:)';
 subplot(211)
