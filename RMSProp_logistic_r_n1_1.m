@@ -1,30 +1,31 @@
 function[wt,t,s]=RMSProp_logistic_r_n1_1(x,y,w0,u,a,e)
 %%
-%ʹ��RMSProp������logistic regression���˴�yΪ-1��1
-% xָ����,yָ��Ӧ��ǩ��aָ�ݶ��½�ѧϰ�ʣ�uָ����������w0Ϊ��ʼֵ
-% EXAMPLE��
+%使用RMSProp法进行logistic regression，此处y为-1或1
+% x指数据,y指对应标签，a指梯度下降学习率，u指动量参数，w0为初始值
+% 输出中wt指最终得出的直线参数，t指迭代次数，s指当前loss函数值
+% EXAMPLE：
 % load('logistic_regression.mat');
 %[wt,t,s]=RMSProp_logistic_r_n1_1(x,y1,[0,0,0]',0.9,0.01,10^(-6))
 l=length(y);
-x1=[x,ones(l,1)];%���ݼ���
+x1=[x,ones(l,1)];%数据加列
 z=x1*w0;
-s=-sum(y.*log(sigmoid(-z))+(1-y).*log(1-sigmoid(-z)));%��ʧ��������
+s=-sum(y.*log(sigmoid(-z))+(1-y).*log(1-sigmoid(-z)));%损失函数计算
 t=0;
-v=zeros(3,1);%������ֵΪ0
+v=zeros(3,1);%动量初值为0
 loss=[];
-while t<9000 && s>0.001%��ֹ����
-        gammax=x1'*(sigmoid(-z)-y);%�ݶȼ���
-        vt=u*v+(1-u)*gammax.*gammax;%��������
+while t<9000 && s>0.001%终止条件
+        gammax=x1'*(sigmoid(-z)-y);%梯度计算
+        vt=u*v+(1-u)*gammax.*gammax;%动量迭代
         v=vt;
-        wt=w0-a*(gammax./(v.^(1/2)+e));%��������
+        wt=w0-a*(gammax./(v.^(1/2)+e));%参数迭代
         w0=wt;
         z=x1*w0;
-        s=-sum(y.*log(sigmoid(-z))+(1-y).*log(1-sigmoid(-z)));%ÿ�ε���������ʧ����
+        s=-sum(y.*log(sigmoid(-z))+(1-y).*log(1-sigmoid(-z)));%每次迭代计算损失函数
         t=t+1;
         loss(t)=s;
 end
 %%
-%�����ͼ
+%结果绘图
 xp = x(y>0,:)';
 xn = x(y==0,:)';
 subplot(211)
